@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import Base64Swift
 
 /// On successful authentication, this structure contains a summary of the authentication flow
 public struct VerifiedAuthentication {

@@ -15,6 +15,7 @@
 import Foundation
 import Crypto
 import WebAuthn
+import Base64Swift
 
 struct TestAuthData {
     var rpIDHash: [UInt8]?

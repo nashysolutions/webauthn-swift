@@ -16,6 +16,7 @@
 import XCTest
 import SwiftCBOR
 import Crypto
+import WebAuthnModels
 
 final class WebAuthnManagerAuthenticationTests: XCTestCase {
     var webAuthnManager: WebAuthnManager!

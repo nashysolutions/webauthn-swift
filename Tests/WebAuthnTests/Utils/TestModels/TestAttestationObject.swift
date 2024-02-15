@@ -14,6 +14,7 @@
 
 import WebAuthn
 import SwiftCBOR
+import Base64Swift
 
 // protocol AttestationObjectParameter: CBOR {}
 

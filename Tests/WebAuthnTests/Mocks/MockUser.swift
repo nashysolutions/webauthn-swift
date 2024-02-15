@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import WebAuthn
+import WebAuthnModels
 
 extension PublicKeyCredentialUserEntity {
     static let mock = PublicKeyCredentialUserEntity(id: [1, 2, 3], name: "John", displayName: "Johnny")

@@ -15,6 +15,7 @@
 import Foundation
 import Crypto
 import SwiftCBOR
+import WebAuthnModels
 
 /// Contains the cryptographic attestation that a new key pair was created by that authenticator.
 public struct AttestationObject {

@@ -14,6 +14,7 @@
 
 import Foundation
 import WebAuthn
+import Base64Swift
 
 struct TestClientDataJSON: Encodable {
     var type = "webauthn.create"

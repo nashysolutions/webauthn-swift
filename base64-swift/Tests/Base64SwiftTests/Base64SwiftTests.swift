@@ -1,22 +1,8 @@
-//===----------------------------------------------------------------------===//
-//
-// This source file is part of the WebAuthn Swift open source project
-//
-// Copyright (c) 2023 the WebAuthn Swift project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE.txt for license information
-// See CONTRIBUTORS.txt for the list of WebAuthn Swift project authors
-//
-// SPDX-License-Identifier: Apache-2.0
-//
-//===----------------------------------------------------------------------===//
-
 import XCTest
+@testable import Base64Swift
 
-@testable import WebAuthn
-
-final class HelpersTests: XCTestCase {
+final class Base64SwiftTests: XCTestCase {
+    
     func testBase64URLEncodeReturnsCorrectString() {
         let input: [UInt8] = [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0]
         let expectedBase64 = "AQABAAEBAAEAAQEAAAABAA=="

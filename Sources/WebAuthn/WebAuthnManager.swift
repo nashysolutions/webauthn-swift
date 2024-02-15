@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import WebAuthnModels
 
 /// Main entrypoint for WebAuthn operations.
 ///

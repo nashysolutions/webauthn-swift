@@ -15,6 +15,8 @@
 @testable import WebAuthn
 import XCTest
 import Crypto
+import Base64Swift
+import WebAuthnModels
 
 final class WebAuthnManagerIntegrationTests: XCTestCase {
     // swiftlint:disable:next function_body_length

@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import Base64Swift
 
 /// The unprocessed response received from `navigator.credentials.get()`.
 ///
@@ -33,17 +34,52 @@ public struct AuthenticationCredential {
 
     /// Value will always be "public-key" (for now)
     public let type: String
+    
+    public init(
+        id: URLEncodedBase64,
+        rawID: [UInt8],
+        response: AuthenticatorAssertionResponse,
+        authenticatorAttachment: String?,
+        type: String
+    ) {
+        self.id = id
+        self.rawID = rawID
+        self.response = response
+        self.authenticatorAttachment = authenticatorAttachment
+        self.type = type
+    }
 }
 
-extension AuthenticationCredential: Decodable {
+extension AuthenticationCredential: Codable {
+    
     public init(from decoder: Decoder) throws {
+        
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        id = try container.decode(URLEncodedBase64.self, forKey: .id)
-        rawID = try container.decodeBytesFromURLEncodedBase64(forKey: .rawID)
-        response = try container.decode(AuthenticatorAssertionResponse.self, forKey: .response)
-        authenticatorAttachment = try container.decodeIfPresent(String.self, forKey: .authenticatorAttachment)
-        type = try container.decode(String.self, forKey: .type)
+        let id = try container.decode(URLEncodedBase64.self, forKey: .id)
+        let rawID = try container.decodeBytesFromURLEncodedBase64(forKey: .rawID)
+        let response = try container.decode(AuthenticatorAssertionResponse.self, forKey: .response)
+        let authenticatorAttachment = try container.decodeIfPresent(String.self, forKey: .authenticatorAttachment)
+        let type = try container.decode(String.self, forKey: .type)
+        
+        self.init(
+            id: id,
+            rawID: rawID,
+            response: response,
+            authenticatorAttachment: authenticatorAttachment,
+            type: type
+        )
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(id, forKey: .id)
+        try container.encode(rawID, forKey: .rawID)
+        try container.encode(response, forKey: .response)
+        try container.encode(authenticatorAttachment, forKey: .authenticatorAttachment)
+        try container.encode(type, forKey: .type)
     }
 
     private enum CodingKeys: String, CodingKey {
