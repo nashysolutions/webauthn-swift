@@ -33,10 +33,6 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Models",
-            path: "./webauthn-models-swift"
-        ),
-        .target(
             name: "WebAuthn",
             dependencies: [
                 "SwiftCBOR",
