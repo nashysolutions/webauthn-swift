@@ -76,7 +76,7 @@ extension AuthenticationCredential: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         try container.encode(id, forKey: .id)
-        try container.encode(rawID, forKey: .rawID)
+        try container.encode(URLEncodedBase64(bytes: rawID), forKey: .rawID)
         try container.encode(response, forKey: .response)
         try container.encode(authenticatorAttachment, forKey: .authenticatorAttachment)
         try container.encode(type, forKey: .type)

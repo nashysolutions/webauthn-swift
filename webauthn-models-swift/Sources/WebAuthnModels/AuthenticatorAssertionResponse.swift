@@ -89,11 +89,11 @@ extension AuthenticatorAssertionResponse: Codable {
         
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(clientDataJSON, forKey: .clientDataJSON)
-        try container.encode(authenticatorData, forKey: .authenticatorData)
-        try container.encode(signature, forKey: .signature)
-        try container.encode(userHandle, forKey: .userHandle)
-        try container.encode(attestationObject, forKey: .attestationObject)
+        try container.encode(URLEncodedBase64(bytes: clientDataJSON), forKey: .clientDataJSON)
+        try container.encode(URLEncodedBase64(bytes: authenticatorData), forKey: .authenticatorData)
+        try container.encode(URLEncodedBase64(bytes: signature), forKey: .signature)
+        try container.encode(URLEncodedBase64(bytes: userHandle), forKey: .userHandle)
+        try container.encode(URLEncodedBase64(bytes: attestationObject), forKey: .attestationObject)
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -102,5 +102,15 @@ extension AuthenticatorAssertionResponse: Codable {
         case signature
         case userHandle
         case attestationObject
+    }
+}
+
+private extension URLEncodedBase64 {
+    
+    init?(bytes: [UInt8]?) {
+        guard let bytes else {
+            return nil
+        }
+        self.init(bytes: bytes)
     }
 }

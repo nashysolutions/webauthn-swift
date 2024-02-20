@@ -8,15 +8,17 @@ final class Base64SwiftTests: XCTestCase {
         let expectedBase64 = "AQABAAEBAAEAAQEAAAABAA=="
         let expectedBase64URL = "AQABAAEBAAEAAQEAAAABAA"
 
-        let base64Encoded = input.base64EncodedString()
-        let base64URLEncoded = input.base64URLEncodedString()
+        let base64Encoded = EncodedBase64(bytes: input)
+        let base64URLEncoded = URLEncodedBase64(base64: base64Encoded)
 
-        XCTAssertEqual(expectedBase64, base64Encoded.asString())
-        XCTAssertEqual(expectedBase64URL, base64URLEncoded.asString())
+        XCTAssertEqual(expectedBase64, base64Encoded.value)
+        XCTAssertEqual(expectedBase64URL, base64URLEncoded.value)
+        XCTAssertEqual(base64URLEncoded.urlDecoded, base64Encoded)
+        XCTAssertEqual(base64Encoded.urlEncoded, base64URLEncoded)
     }
 
     func testEncodeBase64Codable() throws {
-        let base64 = EncodedBase64("AQABAAEBAAEAAQEAAAABAA==")
+        let base64: EncodedBase64 = "AQABAAEBAAEAAQEAAAABAA=="
         let json = try JSONEncoder().encode(base64)
         let decodedBase64 = try JSONDecoder().decode(EncodedBase64.self, from: json)
         XCTAssertEqual(base64, decodedBase64)

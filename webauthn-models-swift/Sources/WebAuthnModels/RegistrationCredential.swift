@@ -70,7 +70,7 @@ extension RegistrationCredential: Codable {
         
         try container.encode(id, forKey: .id)
         try container.encode(type, forKey: .type)
-        try container.encode(rawID.base64URLEncodedString(), forKey: .rawID)
+        try container.encode(URLEncodedBase64(bytes: rawID), forKey: .rawID)
         try container.encode(attestationResponse, forKey: .attestationResponse)
     }
 
@@ -114,8 +114,8 @@ extension AuthenticatorAttestationResponse: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try container.encode(clientDataJSON.base64URLEncodedString(), forKey: .clientDataJSON)
-        try container.encode(attestationObject.base64URLEncodedString(), forKey: .attestationObject)
+        try container.encode(URLEncodedBase64(bytes: clientDataJSON), forKey: .clientDataJSON)
+        try container.encode(URLEncodedBase64(bytes: attestationObject), forKey: .attestationObject)
     }
 
     private enum CodingKeys: String, CodingKey {

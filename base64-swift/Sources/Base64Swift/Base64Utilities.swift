@@ -15,116 +15,145 @@
 import Foundation
 import Logging
 
-/// Container for base64 encoded data
-public struct EncodedBase64: ExpressibleByStringLiteral, Codable, Hashable, Equatable {
-    private let base64: String
-
-    public init(_ string: String) {
-        self.base64 = string
+/// A structure representing a value encoded in Base64 format.
+public struct EncodedBase64: Codable, Hashable, Equatable, ExpressibleByStringLiteral {
+    
+    /// The Base64-encoded value.
+    public let value: String
+    
+    /// Initialises an EncodedBase64 value from a plain text string.
+    /// - Parameter plain: The plain text string to encode.
+    public init(plain: String) {
+        let data = plain.data(using: .utf8) ?? Data()
+        self.value = data.base64EncodedString()
     }
-
-    public init(stringLiteral value: StringLiteralType) {
-        self.init(value)
+    
+    /// Initialises an EncodedBase64 value from a Base64-encoded string.
+    /// - Parameter base64Encoded: The Base64-encoded string.
+    public init(base64Encoded: String) {
+        self.value = base64Encoded
+    }
+    
+    public init(stringLiteral base64Encoded: String) {
+        self.value = base64Encoded
+    }
+    
+    /// Initialises an EncodedBase64 value from an array of bytes.
+    /// - Parameter bytes: The array of bytes to encode.
+    public init(bytes: [UInt8]) {
+        let data = Data(bytes: bytes, count: bytes.count)
+        let value = data.base64EncodedString()
+        self.init(base64Encoded: value)
+    }
+    
+    /// Initialises an EncodedBase64 value from binary data.
+    /// - Parameter data: The binary data to encode.
+    public init(data: Data) {
+        self.init(bytes: Array(data))
+    }
+    
+    init(base64URL: URLEncodedBase64) {
+        var value = base64URL.value
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        while value.count % 4 != 0 {
+            value = value.appending("=")
+        }
+        self.init(base64Encoded: value)
+    }
+    
+    public var urlEncoded: URLEncodedBase64 {
+        URLEncodedBase64(base64: self)
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.base64 = try container.decode(String.self)
+        let value = try container.decode(String.self)
+        self.init(base64Encoded: value)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(self.base64)
+        try container.encode(self.value)
     }
 
-    /// Return as Base64URL
-    public var urlEncoded: URLEncodedBase64 {
-        return .init(
-            self.base64.replacingOccurrences(of: "+", with: "-")
-                .replacingOccurrences(of: "/", with: "_")
-                .replacingOccurrences(of: "=", with: "")
-        )
+    /// Decodes Base64 string and transforms result into `[UInt8]`
+    public var decodedBytes: [UInt8]? {
+        guard let data = Data(base64Encoded: self.value) else {
+            return nil
+        }
+        return [UInt8](data)
     }
-
-    /// Decodes Base64 string and transforms result into `Data`
-    public var decoded: Data? {
-        return Data(base64Encoded: self.base64)
-    }
-
-    /// Returns Base64 data as a String
-    public func asString() -> String {
-        return self.base64
+    
+    public var decodedData: Data? {
+        return Data(base64Encoded: self.value)
     }
 }
 
-/// Container for URL encoded base64 data
-public struct URLEncodedBase64: ExpressibleByStringLiteral, Codable, Hashable, Equatable {
-    let base64URL: String
+/// A structure representing a value encoded in URL-safe Base64 format.
+public struct URLEncodedBase64: Codable, Hashable, Equatable, ExpressibleByStringLiteral {
+    
+    /// The URL-safe Base64-encoded value.
+    public let value: String
+    
+    /// Initialises a URLEncodedBase64 value from a plain text string.
+    /// - Parameter plain: The plain text string to encode.
+    public init(plain: String) {
+        let base64 = EncodedBase64(plain: plain)
+        self.init(base64: base64)
+    }
+    
+    /// Initialises a URLEncodedBase64 value from a URL-safe Base64-encoded string.
+    /// - Parameter base64URLEncoded: The URL-safe Base64-encoded string.
+    public init(base64URLEncoded: String) {
+        self.value = base64URLEncoded
+    }
+    
+    public init(stringLiteral base64URLEncoded: String) {
+        self.value = base64URLEncoded
+    }
+    
+    /// Initialises a URLEncodedBase64 value from binary data.
+    /// - Parameter data: The binary data to encode.
+    public init(data: Data) {
+        let base64Encoded = EncodedBase64(data: data)
+        self.init(base64: base64Encoded)
+    }
+    
+    /// Initialises a URLEncodedBase64 value from an array of bytes.
+    /// - Parameter bytes: The array of bytes to encode.
+    public init(bytes: [UInt8]) {
+        let data = Data(bytes: bytes, count: bytes.count)
+        let base64Encoded = EncodedBase64(base64Encoded: data.base64EncodedString())
+        self.init(base64: base64Encoded)
+    }
 
     /// Decodes Base64URL string and transforms result into `[UInt8]`
     public var decodedBytes: [UInt8]? {
-        guard let base64DecodedData = urlDecoded.decoded else { return nil }
-        return [UInt8](base64DecodedData)
+        let base64 = EncodedBase64(base64URL: self)
+        return base64.decodedBytes
+    }
+    
+    public var urlDecoded: EncodedBase64 {
+        EncodedBase64(base64URL: self)
     }
 
-    public init(_ string: String) {
-        self.base64URL = string
-    }
-
-    public init(stringLiteral value: StringLiteralType) {
-        self.init(value)
+    init(base64: EncodedBase64) {
+        let value = base64.value
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+        self.init(base64URLEncoded: value)
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        self.base64URL = try container.decode(String.self)
+        let value = try container.decode(String.self)
+        self.init(base64URLEncoded: value)
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(self.base64URL)
-    }
-
-    /// Decodes Base64URL into Base64
-    public var urlDecoded: EncodedBase64 {
-        var result = self.base64URL.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
-        while result.count % 4 != 0 {
-            result = result.appending("=")
-        }
-        return .init(result)
-    }
-
-    /// Return Base64URL as a String
-    public func asString() -> String {
-        return self.base64URL
-    }
-}
-
-extension Array where Element == UInt8 {
-    /// Encodes an array of bytes into a base64url-encoded string
-    /// - Returns: A base64url-encoded string
-    public func base64URLEncodedString() -> URLEncodedBase64 {
-        let base64String = Data(bytes: self, count: self.count).base64EncodedString()
-        return EncodedBase64(base64String).urlEncoded
-    }
-
-    /// Encodes an array of bytes into a base64 string
-    /// - Returns: A base64-encoded string
-    public func base64EncodedString() -> EncodedBase64 {
-        return .init(Data(bytes: self, count: self.count).base64EncodedString())
-    }
-}
-
-extension Data {
-    /// Encodes data into a base64url-encoded string
-    /// - Returns: A base64url-encoded string
-    public func base64URLEncodedString() -> URLEncodedBase64 {
-        return [UInt8](self).base64URLEncodedString()
-    }
-}
-
-extension String {
-    func toBase64() -> EncodedBase64 {
-        return .init(Data(self.utf8).base64EncodedString())
+        try container.encode(self.value)
     }
 }

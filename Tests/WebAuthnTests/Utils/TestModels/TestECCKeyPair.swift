@@ -49,7 +49,7 @@ struct TestECCKeyPair {
         // Create a signature. This part is usually performed by the authenticator
         let clientData: Data = TestClientDataJSON(type: "webauthn.get").jsonData
         let clientDataHash = SHA256.hash(data: clientData)
-        let rawAuthenticatorData = authenticatorData.urlDecoded.decoded!
+        let rawAuthenticatorData = authenticatorData.urlDecoded.decodedData!
         let signatureBase = rawAuthenticatorData + clientDataHash
         // swiftlint:disable:next force_try
         let signature = try! TestECCKeyPair.signature(data: signatureBase).derRepresentation

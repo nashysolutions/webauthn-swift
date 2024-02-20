@@ -17,6 +17,7 @@ import XCTest
 import SwiftCBOR
 import Crypto
 import WebAuthnModels
+import Base64Swift
 
 final class WebAuthnManagerAuthenticationTests: XCTestCase {
     var webAuthnManager: WebAuthnManager!
@@ -154,7 +155,7 @@ final class WebAuthnManagerAuthenticationTests: XCTestCase {
             credentialCurrentSignCount: oldSignCount
         )
 
-        XCTAssertEqual(verifiedAuthentication.credentialID, credentialID.base64URLEncodedString())
+        XCTAssertEqual(verifiedAuthentication.credentialID, URLEncodedBase64(bytes: credentialID))
         XCTAssertEqual(verifiedAuthentication.newSignCount, oldSignCount + 1)
     }
 
@@ -175,7 +176,7 @@ final class WebAuthnManagerAuthenticationTests: XCTestCase {
     ) throws -> VerifiedAuthentication {
         try webAuthnManager.finishAuthentication(
             credential: AuthenticationCredential(
-                id: credentialID.base64URLEncodedString(),
+                id: URLEncodedBase64(bytes: credentialID),
                 rawID: credentialID,
                 response: AuthenticatorAssertionResponse(
                     clientDataJSON: clientDataJSON,
