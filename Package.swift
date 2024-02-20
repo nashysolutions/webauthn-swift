@@ -21,17 +21,26 @@ let package = Package(
         .macOS(.v12)
     ],
     products: [
-        .library(name: "WebAuthn", targets: ["WebAuthn"])
+        .library(name: "WebAuthn", targets: ["WebAuthn"]),
+        .library(name: "WebAuthnModels", targets: ["WebAuthnModels"])
     ],
     dependencies: [
         .package(url: "https://github.com/unrelentingtech/SwiftCBOR.git", from: "0.4.5"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "2.0.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-certificates.git", from: "0.3.0"),
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "./webauthn-models-swift")
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0")
     ],
     targets: [
+        .target(
+            name: "Base64Swift"
+        ),
+        .target(
+            name: "WebAuthnModels",
+            dependencies: [
+                .target(name: "Base64Swift")
+            ]
+        ),
         .target(
             name: "WebAuthn",
             dependencies: [
@@ -40,13 +49,20 @@ let package = Package(
                 .product(name: "_CryptoExtras", package: "swift-crypto"),
                 .product(name: "Logging", package: "swift-log"),
                 .product(name: "X509", package: "swift-certificates"),
-                .product(name: "WebAuthnModels", package: "webauthn-models-swift")
+                .target(name: "WebAuthnModels")
             ]
         ),
-        .testTarget(name: "WebAuthnTests", 
-                    dependencies: [
-                        .target(name: "WebAuthn"),
-                        .product(name: "WebAuthnModels", package: "webauthn-models-swift")
-        ])
+        .testTarget(
+            name: "WebAuthnTests",
+            dependencies: [
+                .target(name: "WebAuthn"),
+                .target(name: "WebAuthnModels")
+        ]),
+        .testTarget(
+            name: "Base64SwiftTests",
+            dependencies: [
+                .target(name: "Base64Swift")
+            ]
+        )
     ]
 )
