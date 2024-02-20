@@ -33,10 +33,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Base64Swift",
-            dependencies: [
-                .product(name: "Logging", package: "swift-log")
-            ]
+            name: "Base64Swift"
         ),
         .target(
             name: "WebAuthnModels",
