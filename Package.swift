@@ -29,7 +29,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-log.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-certificates.git", from: "0.3.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
-        .package(path: "./webauthn-models-swift")
+        .package(url: "https://github.com/nashysolutions/webauthn-swift-models.git", .upToNextMinor(from: "1.0.0"))
     ],
     targets: [
         .target(
@@ -40,13 +40,13 @@ let package = Package(
                 .product(name: "_CryptoExtras", package: "swift-crypto"),
                 .product(name: "Logging", package: "swift-log"),
                 .product(name: "X509", package: "swift-certificates"),
-                .product(name: "WebAuthnModels", package: "webauthn-models-swift")
+                .product(name: "WebAuthnModels", package: "webauthn-swift-models")
             ]
         ),
         .testTarget(name: "WebAuthnTests", 
                     dependencies: [
                         .target(name: "WebAuthn"),
-                        .product(name: "WebAuthnModels", package: "webauthn-models-swift")
+                        .product(name: "WebAuthnModels", package: "webauthn-swift-models")
         ])
     ]
 )
