@@ -16,6 +16,7 @@ import Crypto
 import _CryptoExtras
 import Foundation
 import SwiftCBOR
+import WebAuthnModels
 
 protocol PublicKey {
     var algorithm: COSEAlgorithmIdentifier { get }

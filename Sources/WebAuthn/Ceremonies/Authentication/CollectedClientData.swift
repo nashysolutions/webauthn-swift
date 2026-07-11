@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import Base64Swift
 
 /// A parsed version of the `clientDataJSON` received from the authenticator. The `clientDataJSON` is a
 /// representation of the options we passed to the WebAuthn API (`.get()`/ `.create()`).
@@ -37,7 +38,8 @@ public struct CollectedClientData: Codable, Hashable {
 
     func verify(storedChallenge: [UInt8], ceremonyType: CeremonyType, relyingPartyOrigin: String) throws {
         guard type == ceremonyType else { throw CollectedClientDataVerifyError.ceremonyTypeDoesNotMatch }
-        guard challenge == storedChallenge.base64URLEncodedString() else {
+
+        guard let expectedChallenge = URLEncodedBase64(bytes: storedChallenge), challenge == expectedChallenge else {
             throw CollectedClientDataVerifyError.challengeDoesNotMatch
         }
         guard origin == relyingPartyOrigin else { throw CollectedClientDataVerifyError.originDoesNotMatch }

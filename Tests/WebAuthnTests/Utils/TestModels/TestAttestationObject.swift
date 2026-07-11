@@ -14,6 +14,7 @@
 
 import WebAuthn
 import SwiftCBOR
+import Base64Swift
 
 // protocol AttestationObjectParameter: CBOR {}
 
@@ -58,7 +59,7 @@ struct TestAttestationObjectBuilder {
     }
 
     func buildBase64URLEncoded() -> URLEncodedBase64 {
-        build().cborEncoded.base64URLEncodedString()
+        URLEncodedBase64(bytes: build().cborEncoded)!
     }
 
     // MARK: fmt

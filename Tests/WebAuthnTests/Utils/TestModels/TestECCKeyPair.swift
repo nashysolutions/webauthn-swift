@@ -15,6 +15,7 @@
 import Foundation
 import Crypto
 import WebAuthn
+import Base64Swift
 
 struct TestECCKeyPair {
     static let privateKeyPEM = """
@@ -48,7 +49,7 @@ struct TestECCKeyPair {
         // Create a signature. This part is usually performed by the authenticator
         let clientData: Data = TestClientDataJSON(type: "webauthn.get").jsonData
         let clientDataHash = SHA256.hash(data: clientData)
-        let rawAuthenticatorData = authenticatorData.urlDecoded.decoded!
+        let rawAuthenticatorData = authenticatorData.urlDecoded.data
         let signatureBase = rawAuthenticatorData + clientDataHash
         // swiftlint:disable:next force_try
         let signature = try! TestECCKeyPair.signature(data: signatureBase).derRepresentation
