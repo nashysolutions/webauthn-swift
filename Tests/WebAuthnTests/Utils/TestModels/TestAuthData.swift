@@ -15,6 +15,7 @@
 import Foundation
 import Crypto
 import WebAuthn
+import Base64Swift
 
 struct TestAuthData {
     var rpIDHash: [UInt8]?
@@ -56,7 +57,7 @@ struct TestAuthDataBuilder {
     }
 
     func buildAsBase64URLEncoded() -> URLEncodedBase64 {
-        build().byteArrayRepresentation.base64URLEncodedString()
+        URLEncodedBase64(bytes: build().byteArrayRepresentation)!
     }
 
     func validMock() -> Self {

@@ -15,6 +15,8 @@
 @testable import WebAuthn
 import XCTest
 import SwiftCBOR
+import WebAuthnModels
+import Base64Swift
 
 // swiftlint:disable:next type_body_length
 final class WebAuthnManagerRegistrationTests: XCTestCase {
@@ -66,7 +68,7 @@ final class WebAuthnManagerRegistrationTests: XCTestCase {
 
     func testFinishRegistrationFailsIfChallengeDoesNotMatch() async throws {
         var clientDataJSON = TestClientDataJSON()
-        clientDataJSON.challenge = [0, 2, 4].base64URLEncodedString()
+        clientDataJSON.challenge = URLEncodedBase64(bytes: [0, 2, 4])!
         try await assertThrowsError(
             await finishRegistration(
                 challenge: [UInt8]("definitely another challenge".utf8),
@@ -311,7 +313,7 @@ final class WebAuthnManagerRegistrationTests: XCTestCase {
         )
         XCTAssertNotNil(credential)
 
-        XCTAssertEqual(credential.id, credentialID.base64EncodedString().asString())
+        XCTAssertEqual(credential.id, EncodedBase64(bytes: credentialID)!.rawValue)
         XCTAssertEqual(credential.publicKey, credentialPublicKey)
     }
 
@@ -340,7 +342,7 @@ final class WebAuthnManagerRegistrationTests: XCTestCase {
         try await webAuthnManager.finishRegistration(
             challenge: challenge,
             credentialCreationData: RegistrationCredential(
-                id: rawID.base64URLEncodedString(),
+                id: URLEncodedBase64(bytes: rawID)!,
                 type: type,
                 rawID: rawID,
                 attestationResponse: AuthenticatorAttestationResponse(

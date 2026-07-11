@@ -14,6 +14,7 @@
 
 @testable import WebAuthn
 import SwiftCBOR
+import WebAuthnModels
 
 struct TestCredentialPublicKey {
     var kty: CBOR?

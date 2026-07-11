@@ -13,36 +13,8 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import WebAuthnModels
 import SwiftCBOR
-
-/// The response from the authenticator device for the creation of a new public key credential.
-///
-/// When decoding using `Decodable`, `clientDataJSON` and `attestationObject` are decoded from base64url to bytes.
-public struct AuthenticatorAttestationResponse {
-    /// The client data that was passed to the authenticator during the creation ceremony.
-    ///
-    /// When decoding using `Decodable`, this is decoded from base64url to bytes.
-    public let clientDataJSON: [UInt8]
-
-    /// Contains both attestation data and attestation statement.
-    ///
-    /// When decoding using `Decodable`, this is decoded from base64url to bytes.
-    public let attestationObject: [UInt8]
-}
-
-extension AuthenticatorAttestationResponse: Decodable {
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        clientDataJSON = try container.decodeBytesFromURLEncodedBase64(forKey: .clientDataJSON)
-        attestationObject = try container.decodeBytesFromURLEncodedBase64(forKey: .attestationObject)
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case clientDataJSON
-        case attestationObject
-    }
-}
 
 /// A parsed version of `AuthenticatorAttestationResponse`
 struct ParsedAuthenticatorAttestationResponse {

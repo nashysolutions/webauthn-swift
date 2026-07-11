@@ -10,7 +10,7 @@ easy to leverage the power of WebAuthn.
 Add the following entry in your `Package.swift` to start using `WebAuthn`:
 
 ```swift
-.package(url: "https://github.com/swift-server/webauthn-swift.git", from: "1.0.0-alpha")
+.package(url: "https://github.com/nashysolutions/webauthn-swift.git", from: "1.0.0")
 ```
 
 and `WebAuthn` dependency to your target:
@@ -52,6 +52,10 @@ For an authentication ceremony use the following two methods:
 
 Swift WebAuthn is heavily inspired by existing WebAuthn libraries like
 [py_webauthn](https://github.com/duo-labs/py_webauthn) and [go-webauthn](https://github.com/go-webauthn/webauthn).
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## Links
 

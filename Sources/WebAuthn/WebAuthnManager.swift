@@ -13,6 +13,8 @@
 //===----------------------------------------------------------------------===//
 
 import Foundation
+import WebAuthnModels
+import Base64Swift
 
 /// Main entrypoint for WebAuthn operations.
 ///
@@ -112,14 +114,14 @@ public struct WebAuthnManager {
         // TODO: Step 18. -> Verify client extensions
 
         // Step 24.
-        guard try await confirmCredentialIDNotRegisteredYet(parsedData.id.asString()) else {
+        guard try await confirmCredentialIDNotRegisteredYet(parsedData.id.rawValue) else {
             throw WebAuthnError.credentialIDAlreadyExists
         }
 
         // Step 25.
         return Credential(
             type: parsedData.type,
-            id: parsedData.id.urlDecoded.asString(),
+            id: parsedData.id.urlDecoded.rawValue,
             publicKey: attestedCredentialData.publicKey,
             signCount: parsedData.response.attestationObject.authenticatorData.counter,
             backupEligible: parsedData.response.attestationObject.authenticatorData.flags.isBackupEligible,
@@ -144,7 +146,7 @@ public struct WebAuthnManager {
         userVerification: UserVerificationRequirement = .preferred
     ) throws -> PublicKeyCredentialRequestOptions {
         let challenge = challengeGenerator.generate()
-        var timeoutInMilliseconds: UInt32? = nil
+        var timeoutInMilliseconds: UInt32?
         if let timeout {
             timeoutInMilliseconds = UInt32(timeout * 1000)
         }

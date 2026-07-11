@@ -14,16 +14,17 @@
 
 import Foundation
 import WebAuthn
+import Base64Swift
 
 struct TestClientDataJSON: Encodable {
     var type = "webauthn.create"
-    var challenge: URLEncodedBase64 = TestConstants.mockChallenge.base64URLEncodedString()
+    var challenge: URLEncodedBase64 = URLEncodedBase64(bytes: TestConstants.mockChallenge)!
     var origin = "https://example.com"
     var crossOrigin = false
     var randomOtherKey = "123"
 
     var base64URLEncoded: URLEncodedBase64 {
-        jsonData.base64URLEncodedString()
+        URLEncodedBase64(data: jsonData)!
     }
 
     /// Returns this `TestClientDataJSON` as encoded json. On **Linux** this is NOT idempotent. Subsequent calls
