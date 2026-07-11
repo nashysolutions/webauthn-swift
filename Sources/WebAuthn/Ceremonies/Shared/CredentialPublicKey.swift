@@ -47,12 +47,21 @@ enum CredentialPublicKey {
 
         // A leading 0x04 means we got a public key from an old U2F security key.
         // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-registry-v2.0-id-20180227.html#public-key-representation-formats
-        guard publicKeyBytes[0] != 0x04 else {
+        guard publicKeyBytes.first != 0x04 else {
+            // Uncompressed EC P-256 point: 0x04 || X (32 bytes) || Y (32 bytes) = 65 bytes.
+            // Guard the length before slicing so a malformed short key (e.g. the single
+            // byte 0x04, which CBOR-decodes as an integer and reaches this branch) throws
+            // instead of crashing with an index-out-of-range trap. The coordinate ranges
+            // are the correct 32-byte halves; the previous 33-byte overlapping ranges also
+            // trapped on a valid 65-byte key.
+            guard publicKeyBytes.count >= 65 else {
+                throw WebAuthnError.badPublicKeyBytes
+            }
             self = .ec2(EC2PublicKey(
                 algorithm: .algES256,
                 curve: .p256,
-                xCoordinate: Data(Array(publicKeyBytes[1...33])),
-                yCoordinate: Data(Array(publicKeyBytes[33...65]))
+                xCoordinate: Data(publicKeyBytes[1...32]),
+                yCoordinate: Data(publicKeyBytes[33...64])
             ))
             return
         }

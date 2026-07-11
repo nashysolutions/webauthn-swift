@@ -20,7 +20,13 @@ public struct Credential {
     /// Value will always be "public-key" (for now)
     public let type: String
 
-    /// base64 encoded String of the credential ID bytes
+    /// The credential ID as a **standard** Base64-encoded `String` (not Base64URL).
+    ///
+    /// Note the encoding asymmetry across ceremonies: this registration-time `id` is
+    /// standard Base64, whereas `VerifiedAuthentication.credentialID` returned from
+    /// authentication is Base64URL. A relying party that keys its credential storage on
+    /// this value must reconcile the two encodings when looking a credential up during
+    /// authentication.
     public let id: String
 
     /// The public key for this certificate
